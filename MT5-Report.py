@@ -35,7 +35,7 @@ to_date=datetime(2023,3,29)
 #    print("history_deals_get({}, {}, group=\"*USTEC*\")={}".format(from_date,to_date,len(deals)))
 
 
-# get deals for symbols whose names contain neither "EUR" nor "GBP"
+# get deals for all symbols except EUR
 deals = mt5.history_deals_get(from_date, to_date, group="*,!*EUR*")
 if deals == None:
     print("No deals, error code={}".format(mt5.last_error()))
@@ -52,7 +52,7 @@ elif len(deals) > 0:
 print("")
 
 
-# calc point: if win: profit * vol * digits; bsp: 0,5 * 0,1 * 100 = 5P (5P * 10ct = 50ct)
+# defining new dataframe including the points win/loss per trade
 df_points = pd.DataFrame(columns=('time','symbol','volume','price','profit','points'))
 for pos, d in df.iterrows():
     points = d.profit * d.volume * 100
@@ -61,6 +61,7 @@ for pos, d in df.iterrows():
 print(df_points)
 print("")
 
+# adding column to dataframe to get the cumulated points after each trade
 df_points = df_points.astype({"points": float})
 df_points['cumulative_points'] = df_points['points'].cumsum().round(2)
 df_points = df_points.astype({"cumulative_points": float})
