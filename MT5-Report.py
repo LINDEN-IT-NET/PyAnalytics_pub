@@ -55,8 +55,9 @@ print("")
 # defining new dataframe including the points win/loss per trade
 df_points = pd.DataFrame(columns=('time','symbol','volume','price','profit','points'))
 for pos, d in df.iterrows():
-    points = d.profit * d.volume * 100
-    df_points.loc[pos] = [d.time,d.symbol,d.volume,d.price,d.profit,points]
+    if d.volume > 0:
+        points = d.profit / d.volume
+        df_points.loc[pos] = [d.time,d.symbol,d.volume,d.price,d.profit,points]
 
 print(df_points)
 print("")
